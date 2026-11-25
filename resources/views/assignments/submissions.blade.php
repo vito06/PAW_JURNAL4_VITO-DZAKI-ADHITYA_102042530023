@@ -36,6 +36,9 @@
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             
             {{-- TODO 7b: Tambahkan tombol Export CSV yang mengarah ke route('assignments.export-csv', $assignment) --}}
+            <a href="{{ route('assignments.export-csv', $assignment) }}" class="btn btn-primary btn-sm">
+                Export CSV
+            </a>
 
             <a href="{{ route('assignments.edit', $assignment->id) }}" class="btn btn-secondary btn-sm">
                 Edit Tugas
@@ -51,6 +54,21 @@
 
 <!-- Statistik Pengumpulan & Nilai -->
 {{-- TODO 7a: Tampilkan kartu ringkasan Total Mahasiswa, Jumlah Mengumpulkan, dan Rata-rata Nilai --}}
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.8125rem; font-weight: 600; color: var(--text-muted);">Total Mahasiswa</div>
+        <div style="font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">{{ $students->count() }}</div>
+    </div>
+    <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.8125rem; font-weight: 600; color: var(--text-muted);">Jumlah Mengumpulkan</div>
+        <div style="font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">{{ $submissions->count() }}</div>
+    </div>
+    <div class="card" style="padding: 1.25rem;">
+        <div style="font-size: 0.8125rem; font-weight: 600; color: var(--text-muted);">Rata-rata Nilai</div>
+        <div style="font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">{{ $averageScore !== null ? $averageScore : '—' }}</div>
+    </div>
+</div>
 
 <!-- Daftar Pengumpulan Mahasiswa -->
 <div class="card">
@@ -130,7 +148,15 @@
                                 <td>
                                     @if($sub)
                                         {{-- TODO 7c: Tambahkan form PATCH untuk input nilai (0-100) dan catatan_dosen pada setiap mahasiswa yang sudah mengumpulkan --}}
-                                        <span style="font-size: 0.8rem; color: var(--text-muted);">Form penilaian belum diimplementasikan</span>
+                                        <form action="{{ route('submissions.grade', $sub) }}" method="POST" style="display: grid; gap: 0.5rem;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <label for="nilai-{{ $sub->id }}" style="font-size: 0.8rem; font-weight: 600;">Nilai (0-100)</label>
+                                            <input id="nilai-{{ $sub->id }}" type="number" name="nilai" min="0" max="100" step="1" value="{{ old('nilai', $sub->nilai) }}" required class="form-control" style="max-width: 120px;">
+                                            <label for="catatan-dosen-{{ $sub->id }}" style="font-size: 0.8rem; font-weight: 600;">Catatan Dosen</label>
+                                            <textarea id="catatan-dosen-{{ $sub->id }}" name="catatan_dosen" rows="3" maxlength="1000" class="form-control" placeholder="Catatan untuk mahasiswa (opsional)">{{ old('catatan_dosen', $sub->catatan_dosen) }}</textarea>
+                                            <button type="submit" class="btn btn-primary btn-sm" style="justify-self: start;">Simpan Nilai</button>
+                                        </form>
                                     @else
                                         <span style="font-size: 0.8rem; color: var(--text-muted);">&mdash;</span>
                                     @endif

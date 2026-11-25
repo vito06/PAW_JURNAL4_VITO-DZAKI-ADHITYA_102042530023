@@ -36,8 +36,27 @@
                     value="{{ request('search') }}"
                 >
             </div>
-            
             {{-- TODO 6: Tambahkan dropdown filter Semester dan dropdown Urutkan (Sort) di sini --}}
+            
+            <div style="min-width: 180px;">
+                <select name="semester" class="form-control">
+                    <option value="">Semua Semester</option>
+                    @foreach($semesters as $semester)
+                        <option value="{{ $semester }}" {{ request('semester') == $semester ? 'selected' : '' }}>
+                            {{ $semester }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div style="min-width: 180px;">
+                <select name="sort" class="form-control">
+                    <option value="nama_asc" {{ request('sort', 'nama_asc') == 'nama_asc' ? 'selected' : '' }}>Nama (A-Z)</option>
+                    <option value="nama_desc" {{ request('sort') == 'nama_desc' ? 'selected' : '' }}>Nama (Z-A)</option>
+                    <option value="sks_desc" {{ request('sort') == 'sks_desc' ? 'selected' : '' }}>SKS (Terbanyak)</option>
+                    <option value="sks_asc" {{ request('sort') == 'sks_asc' ? 'selected' : '' }}>SKS (Tersedikit)</option>
+                </select>
+            </div>
             
             <button type="submit" class="btn btn-secondary">
                 Filter &amp; Cari
